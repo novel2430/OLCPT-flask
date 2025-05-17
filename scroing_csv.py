@@ -19,7 +19,6 @@ from sklearn.pipeline import Pipeline
 
 class ScoringCSV:
     def __init__(self) -> None:
-        self.__build_joblib_cache_dir__()
         self.__setup_global__()
 
     def __setup_global__(self) -> None:
@@ -45,6 +44,15 @@ class ScoringCSV:
             print('Read the data usnig utf-8 encoding')
         except:
             df = pd.read_csv(os.path.join(self.DATA_PATH, self.input_data+'.csv'), encoding='ISO-8859-1')
+            print('Read the data using ISO-8859-1 encoding')
+        return df
+
+    def __load_custom_dataset_(self, input_file:str) -> pd.DataFrame | pd.Series | Any:
+        try:
+            df = pd.read_csv(input_file, encoding='utf-8')
+            print('Read the data usnig utf-8 encoding')
+        except:
+            df = pd.read_csv(input_file, encoding='ISO-8859-1')
             print('Read the data using ISO-8859-1 encoding')
         return df
 
@@ -93,19 +101,28 @@ class ScoringCSV:
         output_df_oai = output_df_oai.drop(['fulltext'], axis=1)
         return output_df_oai
 
-    def do_stuff(self):
+    def run(self, input_path:str, output_csv_path:str):
+        print("######## Setup Cache Dir ########")
+        self.__build_joblib_cache_dir__()
         # load dataset
-        df = self.__load_dataset_()
+        print("######## Load Dataset ########")
+        # df = self.__load_dataset_()
+        df = self.__load_custom_dataset_(input_path)
         # Load Trained OpenAI GPT Models
+        print("######## Load Openai Model ########")
         models = self.__load_openai_model__()
         # Apply OpenAI GPT Embeddings
+        print("######## Do Openai Embeddings ########")
         enc_df_oai = self.__write_openai_gpt_embedding_file__(df)
 
         if enc_df_oai is None:
             print("ERROR :(")
         else:
+            print("######## Do Prediction ########")
             predict = self.predict_attribute_openai(enc_df_oai, models, df)
             print(predict)
+            print("######## Write File to {} ########".format(output_csv_path))
+            predict.to_csv(output_csv_path, index=False) 
 
-scoring = ScoringCSV()
-scoring.do_stuff()
+# scoring = ScoringCSV()
+# scoring.run()
