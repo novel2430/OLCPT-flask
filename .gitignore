@@ -17,6 +17,9 @@ Predictions/*
 Keys/*
 !Keys/.gitkeep
 
+Tasks/*
+!Tasks/.gitkeep
+
 .joblib_cache/
 
 logs.log
