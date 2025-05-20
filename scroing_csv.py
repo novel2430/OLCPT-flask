@@ -124,5 +124,5 @@ class ScoringCSV:
             print("######## Write File to {} ########".format(output_csv_path))
             predict.to_csv(output_csv_path, index=False) 
 
-# scoring = ScoringCSV()
-# scoring.run()
+#scoring = ScoringCSV()
+#scoring.run("./Data/text4scoring_csv-test.csv", "./output.csv")

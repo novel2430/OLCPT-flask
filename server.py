@@ -44,7 +44,7 @@ def upload():
 
     # 背景執行任務
     def background_task():
-        write_status(status_path, 'running')
+        write_status(status_path, 'processing')
         try:
             scoring = ScoringCSV()
             scoring.run(input_path=input_path, output_csv_path=output_path)
@@ -71,7 +71,11 @@ def result(task_id):
 
     import pandas as pd
     df = pd.read_csv(output_path)
-    return df.to_json(orient='records')
+    columns = df.columns.tolist()
+    records = df.values.tolist()
+    result = [columns] + records
+    return jsonify(result)
+    # return df.to_json(orient='records')
 
 # 結果下載（CSV 檔）
 @app.route('/download/<task_id>', methods=['GET'])
